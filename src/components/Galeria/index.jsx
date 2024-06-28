@@ -5,12 +5,12 @@ import Tag from "./Tags"
 import Imagen from "./Imagen"
 
 const GaleriaContainer = styled.div`
-display: flex;
-gap: 24px;
+    display: flex;
+    gap: 24px;
 `
 
 const SeccionFluida = styled.section`
-flex-grow: 1;
+    flex-grow: 1;
 `
 const ImagenesContainer = styled.section`
     display: flex;
@@ -20,24 +20,27 @@ const ImagenesContainer = styled.section`
 `
 
 
-const Galeria = ({ fotos = [], alSeleccionarFoto,alAlternarFavorito }) => {
+const Galeria = ({fotos = [], alSeleccionarFoto, alAlternarFavorito, consulta}) => {
 
     return (
         <>
-            <Tag />
+            <Tag/>
             <GaleriaContainer>
                 <SeccionFluida>
                     <Titulo>Navegue por la galería</Titulo>
                     <ImagenesContainer>
-                        {fotos.map(foto => <Imagen
-                        alAlternarFavorito= {alAlternarFavorito}
-                        alSolicitarZoom={alSeleccionarFoto}
+                        {fotos.filter(foto => {
+                            return consulta === '' || foto.titulo.toLocaleLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "")
+                                .includes(consulta.toLocaleLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, ""))
+                        }).map(foto => <Imagen
+                            alAlternarFavorito={alAlternarFavorito}
+                            alSolicitarZoom={alSeleccionarFoto}
                             key={foto.id}
-                            foto={foto} />)
+                            foto={foto}/>)
                         }
                     </ImagenesContainer>
                 </SeccionFluida>
-                <Populares />
+                <Populares/>
 
             </GaleriaContainer>
         </>
