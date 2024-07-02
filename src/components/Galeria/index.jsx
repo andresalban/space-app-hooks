@@ -21,7 +21,6 @@ const ImagenesContainer = styled.section`
 
 
 const Galeria = ({fotos = [], alSeleccionarFoto, alAlternarFavorito, consulta}) => {
-
     return (
         <>
             <Tag/>
