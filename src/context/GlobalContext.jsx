@@ -5,23 +5,28 @@ export const GlobalContext = createContext();
 const initialState = {
     consulta: '',
     fotosDeGaleria: [],
-    fotoSeleccionada: null
+    fotoSeleccionada: null,
+    modalAbierto: false,
 }
 const reducer = (state, action) => {
     switch (action.type) {
         case 'SET_CONSULTA':
-            return {...state, consulta: action.payload};
+            return { ...state, consulta: action.payload };
         case 'SET_FOTOS_DE_GALERIA':
-            return {...state, fotosDeGaleria: action.payload};
-        case 'SET_FOTO_SELECIONADA':
-            return {...state, fotoSeleccionada: action.payload};
+            return { ...state, fotosDeGaleria: action.payload };
+        case 'SET_FOTO_SELECCIONADA':
+            return {
+                ...state,
+                fotoSeleccionada: action.payload,
+                modalAbierto: action.payload != null ? true : false
+            };
         case 'ALTERNAR_FAVORITO':
             const fotosDeGaleria = state.fotosDeGaleria.map(fotoDeGaleria => {
                 return {
                     ...fotoDeGaleria,
                     favorita: fotoDeGaleria.id === action.payload.id ? !action.payload.favorita : fotoDeGaleria.favorita
                 }
-            })
+            });
             if (action.payload.id === state.fotoSeleccionada?.id) {
                 return {
                     ...state,
@@ -33,17 +38,15 @@ const reducer = (state, action) => {
             } else {
                 return {
                     ...state, fotosDeGaleria: fotosDeGaleria
-
                 }
             }
-
         default:
             return state;
     }
-}
+};
 
 //definir el componente  que va permitir proveer/compartir las cosas
-const GlobalContextProvider = ({children}) => {
+const GlobalContextProvider = ({ children }) => {
 
     const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -56,15 +59,16 @@ const GlobalContextProvider = ({children}) => {
             const res = await fetch('http://localhost:3000/fotos');
             const data = await res.json();
             //setFotosDeGaleria([...data]);
-            dispatch({type: 'SET_FOTOS_DE_GALERIA', payload: data})
+            dispatch({ type: 'SET_FOTOS_DE_GALERIA', payload: data })
         }
 
         setTimeout(() => getData(), 5000);
-    }, [])
+    }, []);
+
 
 
     return (
-        <GlobalContext.Provider value={{state, dispatch}}>
+        <GlobalContext.Provider value={{ state, dispatch }}>
             {children}
         </GlobalContext.Provider>
     )
